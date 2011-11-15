@@ -1,0 +1,15 @@
+---
+abstract: 'Frequently asked questions about Treex'
+author:
+  - 'Treex team <treex@ufal.mff.cuni.cz>'
+build_requires: {}
+configure_requires:
+  ExtUtils::MakeMaker: 6.30
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.300003, CPAN::Meta::Converter version 2.112621'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Treex-Doc
+version: 0.07297
