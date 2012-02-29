@@ -1,6 +1,6 @@
 package Treex::Tutorial::FirstSteps;
 
-=pod
+=encoding utf8
 
 =head1 NAME
 
@@ -9,7 +9,7 @@ Treex::Tutorial::FirstSteps - First steps after installing Treex
 
 =head1 VERSION
 
-version 0.07297
+version 0.08324
 
 =head1 SHORT INTRODUCTION
 
@@ -21,20 +21,20 @@ A sequence of blocks is called C<scenario> and it can describe end-to-end NLP
 application, e.g. machine translation or preprocessing of a parallel treebank. 
 
 Treex applications can be executed from Perl.
-However, in this tutorial we'll start with the command line interface C<treex>.
+However, usually they are executed using the command line interface C<treex>.
 
 =head1 HELLO WORLD
 
 We will start traditionally with the "Hello, world!" example :-). 
 
-  echo 'Hello, world!' | treex Read::Text language=en Write::Text language=en
+ echo 'Hello, world!' | treex Read::Text language=en Write::Text language=en
 
 The desired output was printed to STDOUT, but there are some info messages
 around printed to STDERR. To filter out these messages you can either use the
-C<--quite> option (C<-q>) or the standard redirection of STDERR.
+C<--quiet> option (C<-q>) or the standard redirection of STDERR.
 
-  echo 'Hello, world!' | treex -q Read::Text language=en Write::Text language=en
-  echo 'Hello, world!' | treex Read::Text language=en Write::Text language=en 2>/dev/null
+ echo 'Hello, world!' | treex -q Read::Text language=en Write::Text language=en
+ echo 'Hello, world!' | treex Read::Text language=en Write::Text language=en 2>/dev/null
 
 =over
 
@@ -43,12 +43,12 @@ C<--quite> option (C<-q>) or the standard redirection of STDERR.
 I<Read::Text language=en Write::Text language=en> is a scenario definition.
 The scenario consists of two blocks: I<Read::Text> and I<Write::Text>.
 Each block has one parameter set, the name of the parameter is C<language>
-and its value is C<en> (which is ISO 639-1 code for English).
+and its value is C<en> (which is an ISO 639-1 code for English).
 
 =item Why is the C<language> parameter needed?
 
-One Treex document can contain sentences in more language
-(which is useful for task like word alignment or machine translation),
+One Treex document can contain sentences in more languages
+(which is useful for tasks like word alignment or machine translation),
 so it is necessary to instruct each block on which language it should operate.
 
 =item Can I make the scenario description shorter? 
@@ -56,7 +56,7 @@ so it is necessary to instruct each block on which language it should operate.
 It is not necessary to repeat the same parameter specification for every block.
 You can use a special block C<Util::SetGlobal>:
 
-  echo 'Hello, world!' | treex -q Util::SetGlobal language=en Read::Text Write::Text
+ echo 'Hello, world!' | treex -q Util::SetGlobal language=en Read::Text Write::Text
 
 =item Can I make it even shorter?
 
@@ -64,15 +64,15 @@ Yes. (And I know the previous example was not actually shorter.)
 There is an option C<--language> (C<-L>) which is just a shortcut
 for C<Util::SetGlobal language=..>.
 
-  echo 'Hello, world!' | treex -q --language=en Read::Text Write::Text
-  echo 'Hello, world!' | treex -q -Len Read::Text Write::Text
+ echo 'Hello, world!' | treex -q --language=en Read::Text Write::Text
+ echo 'Hello, world!' | treex -q -Len Read::Text Write::Text
   
 =back
 
 The "Hello, world!" example is silly. The first block (so-called B<reader>)
-read the plain text input, converted it to the Treex in-memory document
-representation and this document was passed to the second block
-(so-called B<writer>) that converted it to plain text and printed on STDOUT.
+reads the plain text input, converts it to the Treex in-memory document
+representation and this document is passed to the second block
+(so-called B<writer>) that converts it to plain text and prints to STDOUT.
 No (linguistic) processing was done.
 
 There are readers and writers for various other formats than plain text
@@ -89,8 +89,8 @@ in this tutorial chapter, but we'll try to do something slightly more interestin
 To segment a text into sentences we can use block C<W2A::Segment>
 and writer C<Write::Sentences> that prints each sentence on a separate line.
 
-  echo "Hello! Mr. Brown, how are you?" \
-   | treex -Len Read::Text W2A::Segment Write::Sentences
+ echo "Hello! Mr. Brown, how are you?" \
+  | treex -Len Read::Text W2A::Segment Write::Sentences
 
 You can see, that the text was segmented into three sentences:
 "I<Hello!>", "I<Mr.>", and "I<Brown, how are you?>".
@@ -103,24 +103,29 @@ even if they are followed by a fullstop and a capital letter.
 By the way, Treex is object-oriented, blocks are classes and
 C<W2A::EN::Segment> is a descendant of the C<W2A::Segment> base class.
 
-  echo "Hello! Mr. Brown, how are you?" \
-   | treex -Len Read::Text W2A::EN::Segment Write::Sentences
+ echo "Hello! Mr. Brown, how are you?" \
+  | treex -Len Read::Text W2A::EN::Segment Write::Sentences
 
 =over
 
 =item Where can I find blocks' source code?
 
-All Treex blocks are stored in C<$TMT_ROOT/treex/lib/Treex/Block/>.
+The blocks are actually Perl modules and if you followed L<Tutorial::Install>
+you can find them in F<~/perl5/lib/perl5/Treex/Block/>.
+Generally, you can find the real location of perl module with C<perldoc -l>.
 The full name of the C<W2A::EN::Segment> module is actually
 C<Treex::Block::W2A::EN::Segment>, but since the prefix C<Treex::Block::>
 is common to all blocks, it is not written in the scenario description.
+So the location of C<W2A::EN::Segment> can be found with
+
+ perldoc -l Treex::Block::W2A::EN::Segment
 
 =item What does the name C<W2A::EN::Segment> mean?
 
 All Treex blocks that do shallow linguistic analysis
 (segmentation, tokenization, lemmatization, PoS tagging, dependency parsing)
 are grouped in a directory C<W2A> (W and A are names of the two layers of
-language description, but this will be explained L<later|TODO>). 
+language description). 
 Language specific blocks are stored in a subdirectory with a uppercase ISO code
 of the given language (C<EN>) in this case.
 
@@ -128,7 +133,7 @@ of the given language (C<EN>) in this case.
 
 If you have C<sample.txt> with one sentence per line, you can load it to Treex using
 
-  cat sample.txt | treex -Len Read::Sentences ...
+ cat sample.txt | treex -Len Read::Sentences ...
 
 =back
 
@@ -137,47 +142,9 @@ L<Treex::Block::W2A::Segment>,
 L<Treex::Block::W2A::SegmentOnNewlines>, and
 L<Treex::Block::W2A::ResegmentSentences>.
 
-=head1 TOKENIZATION, LEMMATIZATION, TAGGING
+=head2 Task 1
 
-  echo "Mr. Brown, we'll start tagging." |\
-   treex -Len Read::Sentences W2A::TokenizeOnWhitespace Write::CoNLLX
-
-  echo "Mr. Brown, we'll start tagging." |\
-   treex -Len Read::Sentences W2A::Tokenize Write::CoNLLX
-
-  echo "Mr. Brown, we'll start tagging." |\
-   treex -Len Read::Sentences W2A::EN::Tokenize Write::CoNLLX
-
-  echo "Mr. Brown, we'll start tagging." |\
-   treex -Len Read::Sentences\
-              W2A::EN::Tokenize\
-              W2A::TagTreeTagger\
-              W2A::EN::Lemmatize\
-              Write::CoNLLX
-
-  echo "Mr. Brown, we'll start tagging." |\
-   treex -Len Read::Sentences\
-              W2A::EN::Tokenize\
-              W2A::EN::TagMorce\
-              W2A::EN::Lemmatize\
-              Write::CoNLLX
-
-  echo "Es tut mir leid." |\
-   treex -Lde Read::Sentences W2A::Tokenize W2A::TagTreeTagger Write::CoNLLX
-  echo "Lo siento" |\
-   treex -Les Read::Sentences W2A::Tokenize W2A::TagTreeTagger Write::CoNLLX
-  echo "Mi dispiace" |\
-   treex -Lit Read::Sentences W2A::Tokenize W2A::TagTreeTagger Write::CoNLLX
-  echo "Je suis desolée" |\
-   treex -Lfr Read::Sentences W2A::Tokenize W2A::TagTreeTagger Write::CoNLLX
-  echo "Bohužel jsem tento tutorial nedokončil." |\
-   treex -Lcs Read::Sentences W2A::CS::Tokenize W2A::CS::TagMorce Write::CoNLLX
-
-=head1 TASKS
-
-=head2 Task1:
-
-You have an input plain text (TODO: add paragraphs_sample.txt)
+You have an input plain text (e.g. F<data/news.txt>)
 where each paragraph (including headlines)
 is on a separate line. Load this file into Treex and print one sentence per line.
 Note that headlines do not end with a fullstop,
@@ -185,12 +152,159 @@ but they should be treated as separated sentences
 
 HINT: See documentation of L<Treex::Block::W2A::Segment>.
 
+=head1 TOKENIZATION, LEMMATIZATION, TAGGING
+
+Try these scenarios and check the differences:
+
+ echo "Mr. Brown, we'll start tagging." |\
+  treex -Len Read::Sentences W2A::TokenizeOnWhitespace Write::CoNLLX
+
+ echo "Mr. Brown, we'll start tagging." |\
+  treex -Len Read::Sentences W2A::Tokenize Write::CoNLLX
+
+ echo "Mr. Brown, we'll start tagging." |\
+  treex -Len Read::Sentences W2A::EN::Tokenize Write::CoNLLX
+
+ echo "Mr. Brown, we'll start tagging." |\
+  treex -Len Read::Sentences W2A::EN::TagLinguaEn Write::CoNLLX
+
+Now, the fourth column in CoNLLX format contains PoS (part-of-speech) tags,
+but the tokenization is different than with C<W2A::EN::Tokenize>.
+The reason is that L<W2A::EN::TagLinguaEn|Treex::Block::W2A::EN::TagLinguaEn>
+is actually a thin wrapper for a popular Perl module L<Lingua::EN::Tagger>,
+which does tokenization and tagging in one step.
+
+We can try another tagger which is better suited for the modularity idea.
+Note that C<W2A::TagTreeTagger> was not released on CPAN yet
+(it is a wrapper for a binary of L<TreeTagger|http://www.ims.uni-stuttgart.de/projekte/corplex/TreeTagger>),
+and to use Featurama tagger you must first install it as described in L<the Installation Guide|Treex::Tutorial::Install/6. Install Featurama tagger>.
+
+ echo "Mr. Brown, we'll start tagging." |\
+  treex -Len Read::Sentences\
+             W2A::EN::Tokenize\
+             W2A::TagTreeTagger\
+             W2A::EN::Lemmatize\
+             Write::CoNLLX
+
+Now, the third column contains lemmas, but the tags are not from the standard PennTB tagset.
+As a result, also the lemmas for proper nouns are lowercased
+(because L<W2A::EN::Lemmatize|Treex::Block::W2A::EN::Lemmatize> expect I<NNP> tag for proper nouns).
+For English and Czech, Treex offers a pre-trained model for a high-quality L<Featurama|http://featurama.sourceforge.net/> tagger.
+For many other languages, there are pre-trained TreeTagger models.
+
+ echo "Mr. Brown, we'll start tagging." |\
+  treex -Len Read::Sentences\
+             W2A::EN::Tokenize\
+             W2A::TagFeaturama\
+             W2A::EN::Lemmatize\
+             Write::CoNLLX
+
+ echo "Es tut mir leid." |\
+  treex -Lde Read::Sentences W2A::Tokenize W2A::TagTreeTagger Write::CoNLLX
+ echo "Lo siento" |\
+  treex -Les Read::Sentences W2A::Tokenize W2A::TagTreeTagger Write::CoNLLX
+ echo "Mi dispiace" |\
+  treex -Lit Read::Sentences W2A::Tokenize W2A::TagTreeTagger Write::CoNLLX
+ echo "Je suis desolée" |\
+  treex -Lfr Read::Sentences W2A::Tokenize W2A::TagTreeTagger Write::CoNLLX
+ echo "Bohužel jsem tento tutorial nedokončil." |\
+  treex -Lcs Read::Sentences W2A::CS::Tokenize W2A::TagFeaturama Write::CoNLLX
+
+If you suceeded to install Morče tagger, you can substitute C<W2A::TagFeaturama>
+with C<W2A::EN::TagMorce> or C<W2A::CS:TagMorce>.
+
+=head2 Bonus Task 2
+
+Implement a rule-based (or statistical if you dare) tokenizer for a language of your choice.
+We will be happy to give you write permission to Treex SVN, so you can commit the block.
+
+HINT: Find the source code of L<W2A::EN::Tokenize|Treex::Block::W2A::EN::Tokenize>,
+copy it to F<W2A/XY/Tokenize.pm> (substitute XY for the uppercased ISO code of your language),
+and change the implementation of C<tokenize_sentence> method.
+
+=head1 DEPENDENCY PARSING
+
+ echo "John loves Mary" |\
+  treex -Len Read::Sentences\
+             W2A::EN::TagLinguaEn\
+             W2A::EN::Lemmatize\
+             W2A::EN::ParseMSTperl\
+             Write::CoNLLX
+
+=head2 Task 3
+
+Try to use different taggers and find sentences where different tagging leads to different parsing.
+You can also try to use different parsers:
+C<W2A::EN::ParseMST> (the original R. McDonald's implementation),
+or C<W2A::EN::ParseMalt> (use parameter C<memory=1g>),
+but those blocks (and wrappers for the Java implementation) are not released on CPAN yet,
+so if you are not using the preinstalled Treex in SU2, you may need to install the parsers first.
+
+=head2 Task 4
+
+Treex native format F<*.treex.gz> is a actually a gzipped XML.
+During the following section on readers and writers,
+look inside the files (C<zless my.treex.gz>.
+Check what happends when lemmatization is added.
+Try to continue in the analysis and add tagging and parsing.
+Visualize the individual steps using TrEd with
+
+ ttred my.treex.gz
+
+=head1 READERS, WRITERS AND TREEX NATIVE FORMAT
+
+So far, we have printed all the results to STDOUT in CoNLLX format.
+You can easily forward the output to a file using a standard redirection,
+but you can also specify the output file with a writer's parameter C<to>.
+
+ echo "John loves Mary" | treex -Len Read::Sentences W2A::EN::TagLinguaEn\
+      Write::CoNLLX to=my.conll
+
+There is a safety check against accidental overwriting files,
+so if you want to overwrite F<my.conll>, you must use C<Write::CoNLLX to=my.conll clobber=1>.
+
+Similarly, you can specify the input files with a reader's parameter C<from>.
+
+ treex -Len Read::CoNLLX from=my.conll Write::Sentences
+
+The parameter C<from> can contain a list of comma or space separated files.
+If a file starts with I<@> character, it is interpreted as a file list
+with one file name per line.
+So you can do e.g.:
+
+ ls data/pcedt*.treex.gz > my.list
+ treex -Len Read::Treex from=@my.list Write::Sentences to=out.txt
+
+For Treex file format (F<*.treex> or F<*.treex.gz>) there is a shortcut,
+which automatically adds the reader to the beginning of the scenario.
+
+ treex -Len Write::Sentences -- data/pcedt*.treex.gz
+
+You can use treex CLI as an format convertor.
+
+ treex -Len Read::CoNLLX from=my.conll Write::Treex to=my.treex.gz
+
+Finally, there is another shortcut, that allows you to modify treex files in situ.
+
+ treex -s -Len W2A::EN::Lemmatize -- my.treex.gz
+ # check that lemmas were added
+ treex -Len -q Write::CoNLLX -- my.treex.gz
+
+=head1 NEXT TASKS
+
+Now, you can try to do some programming task,
+both templates (containing specifications) and solutions are provided in C<Treex::Block::Tutorial>.
+In SU2 lab, please update your local copy:
+
+ cp -r ~popem3am/treex_tutorial/Treex ~/treex_tutorial/
+
+
 =head1 AUTHOR
 
 Martin Popel <popel@ufal.mff.cuni.cz>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright © 2011 by Institute of Formal and Applied Linguistics, Charles University in Prague
+Copyright © 2011-2012 by Institute of Formal and Applied Linguistics, Charles University in Prague
 
 This module is free software; you can redistribute it and/or modify it under the same terms as Perl itself.

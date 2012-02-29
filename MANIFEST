@@ -1,13 +1,12 @@
 Changes
-Changes.template
 LICENSE
 MANIFEST
 META.yml
 Makefile.PL
 README
 lib/Treex/Manual/FAQ.pod
+lib/Treex/Tutorial.pod
 lib/Treex/Tutorial/FirstSteps.pod
 lib/Treex/Tutorial/Install.pod
 lib/Treex/Tutorial/ReadersAndWriters.pod
-lib/Treex/Tutorial/czech.txt
-lib/Treex/Tutorial/english.txt
+t/doctest.t

@@ -9,9 +9,13 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "Frequently asked questions about Treex",
+  "ABSTRACT" => "Hands-on introduction to the Treex NLP framework",
   "AUTHOR" => "Treex team <treex\@ufal.mff.cuni.cz>",
-  "BUILD_REQUIRES" => {},
+  "BUILD_REQUIRES" => {
+    "Test::More" => 0,
+    "strict" => 0,
+    "warnings" => 0
+  },
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
   },
@@ -20,9 +24,9 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "Treex::Doc",
   "PREREQ_PM" => {},
-  "VERSION" => "0.07297",
+  "VERSION" => "0.08324",
   "test" => {
-    "TESTS" => ""
+    "TESTS" => "t/*.t"
   }
 );
 

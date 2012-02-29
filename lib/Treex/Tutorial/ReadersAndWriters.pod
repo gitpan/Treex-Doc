@@ -9,7 +9,7 @@ Treex::Tutorial::ReadersAndWriters - reading/writing from/to different file form
 
 =head1 VERSION
 
-version 0.07297
+version 0.08324
 
 =head1 FORMATS
 
